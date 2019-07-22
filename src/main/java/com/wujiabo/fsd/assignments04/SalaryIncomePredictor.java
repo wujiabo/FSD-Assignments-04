@@ -5,22 +5,20 @@ import java.util.Scanner;
 
 public class SalaryIncomePredictor {
 
-    private static boolean File_Mail = false;
-
     public static void main(String[] args) {
 
         //The starting salary
-        String startingSalary = null;
+        BigDecimal startingSalary = null;
         //Increment to be received in percent
-        String incrementPercent = null;
+        BigDecimal incrementPercent = null;
         //How frequently is increment received (quarterly, half-yearly, annuallyetc.)
-        String incrementFrequency = null;
+        Integer incrementFrequency = null;
         //Deductions on income
-        String deductionsPercent = null;
+        BigDecimal deductionsPercent = null;
         //How frequently aredeductions done (quarterly, half-yearly, annually etc.)
-        String deductionsFrequency = null;
+        Integer deductionsFrequency = null;
         //Prediction for (years)
-        String predictionYears = null;
+        Integer predictionYears = null;
 
 
         Scanner sc = new Scanner(System.in);
@@ -28,7 +26,7 @@ public class SalaryIncomePredictor {
             System.out.println("The starting salary:");
             String _startingSalary = sc.next();
             if(validateStartingSalary(_startingSalary)){
-                startingSalary = _startingSalary;
+                startingSalary = new BigDecimal(_startingSalary);
             }
         }
 
@@ -36,7 +34,7 @@ public class SalaryIncomePredictor {
             System.out.println("The increment(%):");
             String _incrementPercent = sc.next();
             if(validatePercent(_incrementPercent)){
-                incrementPercent = _incrementPercent;
+                incrementPercent = new BigDecimal(_incrementPercent);
             }
         }
 
@@ -44,7 +42,7 @@ public class SalaryIncomePredictor {
             System.out.println("The frequency of increment(times a year):");
             String _incrementFrequency = sc.next();
             if(validateFrequency(_incrementFrequency)){
-                incrementFrequency = _incrementFrequency;
+                incrementFrequency = Integer.valueOf(_incrementFrequency);
             }
         }
 
@@ -52,7 +50,7 @@ public class SalaryIncomePredictor {
             System.out.println("The deduction(%):");
             String _deductionsPercent = sc.next();
             if(validatePercent(_deductionsPercent)){
-                deductionsPercent = _deductionsPercent;
+                deductionsPercent = new BigDecimal(_deductionsPercent);
             }
         }
 
@@ -60,12 +58,55 @@ public class SalaryIncomePredictor {
             System.out.println("The frequency of deductions(times a year):");
             String _deductionsFrequency = sc.next();
             if(validateFrequency(_deductionsFrequency)){
-                deductionsFrequency = _deductionsFrequency;
+                deductionsFrequency = Integer.valueOf(_deductionsFrequency);
             }
         }
 
-        System.out.println("end");
 
+        while(predictionYears == null){
+            System.out.println("The prediction for (years):");
+            String _predictionYears = sc.next();
+            if(validateYears(_predictionYears)){
+                predictionYears = Integer.valueOf(_predictionYears);
+            }
+        }
+        printReport(startingSalary,incrementPercent,incrementFrequency,deductionsPercent,deductionsFrequency,predictionYears);
+    }
+
+    private static void printReport(BigDecimal startingSalary, BigDecimal incrementPercent, Integer incrementFrequency, BigDecimal deductionsPercent, Integer deductionsFrequency, Integer predictionYears) {
+        printIncrementReport();
+        printDeductionReport();
+        printPrediction();
+    }
+
+    private static void printPrediction() {
+        System.out.println("c.Prediction");
+        System.out.println("Year|Starting|Increment Amount|Deduction Amount|Salary Growth");
+    }
+
+    private static void printDeductionReport() {
+        System.out.println("b.Deduction Report");
+        System.out.println("Year|Starting|Number of deductions|Deduction%|Deduction Amount");
+    }
+
+    private static void printIncrementReport() {
+        System.out.println("a.Increment Report");
+        System.out.println("Year|Starting|Number of Increments|Increment%|Increment Amount");
+    }
+
+    private static boolean validateYears(String years) {
+        Integer yearsInt = null;
+        try{
+            yearsInt = Integer.valueOf(years);
+        }catch (Exception e){
+            System.out.println("Not a integer number.");
+            return false;
+        }
+        if(yearsInt < 1){
+            System.out.println("Do not accept a number less than 1 for prediction years.");
+            return false;
+        }
+        return true;
     }
 
     private static boolean validateFrequency(String frequency) {
