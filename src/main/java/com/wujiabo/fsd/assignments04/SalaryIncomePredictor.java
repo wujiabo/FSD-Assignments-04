@@ -85,10 +85,12 @@ public class SalaryIncomePredictor {
         for (int i = 1; i <= predictionYears; i++) {
             BigDecimal startingSalaryPrint = startingSalary;
             startingSalary = SalaryUtils.increment(startingSalary, incrementPercent, incrementFrequency);
-            Double incrementAmount = BigDecimalUtils.subtract(startingSalary.doubleValue(),startingSalaryPrint.doubleValue());
+            BigDecimal temp1 = startingSalary;
+            Double incrementAmount = BigDecimalUtils.subtract(startingSalary.doubleValue(), startingSalaryPrint.doubleValue());
             startingSalary = SalaryUtils.deduction(startingSalary, deductionsPercent, deductionsFrequency);
-            Double deductionAmount = BigDecimalUtils.subtract(startingSalary.doubleValue(),startingSalaryPrint.doubleValue());
-            System.out.println(i + "|" + startingSalaryPrint + "|Increment Amount|Deduction Amount|Salary Growth");
+            Double deductionAmount = BigDecimalUtils.subtract(startingSalary.doubleValue(), temp1.doubleValue());
+            Double salaryGrowth = BigDecimalUtils.subtract(startingSalary.doubleValue(), startingSalaryPrint.doubleValue());
+            System.out.println(i + "|" + BigDecimalUtils.moneyFormat(startingSalaryPrint.doubleValue()) + "|" + BigDecimalUtils.moneyFormat(incrementAmount) + "|" + BigDecimalUtils.moneyFormat(deductionAmount) + "|" + BigDecimalUtils.moneyFormat(salaryGrowth));
         }
     }
 
