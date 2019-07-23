@@ -20,6 +20,8 @@ public class SalaryIncomePredictor {
         //Prediction for (years)
         Integer predictionYears = null;
 
+        Boolean increaseOrDecrease = null;
+
 
         Scanner sc = new Scanner(System.in);
         while (startingSalary == null) {
@@ -30,7 +32,15 @@ public class SalaryIncomePredictor {
             }
         }
 
-        while (incrementPercent == null) {
+        while (increaseOrDecrease == null) {
+            System.out.println("(1)Increase or (2)Decrease:");
+            String _increaseOrDecrease = sc.next();
+            if (validateIncreaseOrDecrease(_increaseOrDecrease)) {
+                increaseOrDecrease = "1".equals(_increaseOrDecrease);
+            }
+        }
+
+        while (increaseOrDecrease && incrementPercent == null) {
             System.out.println("The increment(%):");
             String _incrementPercent = sc.next();
             if (validatePercent(_incrementPercent)) {
@@ -38,7 +48,7 @@ public class SalaryIncomePredictor {
             }
         }
 
-        while (incrementFrequency == null) {
+        while (increaseOrDecrease && incrementFrequency == null) {
             System.out.println("The frequency of increment(times a year):");
             String _incrementFrequency = sc.next();
             if (validateFrequency(_incrementFrequency)) {
@@ -46,7 +56,7 @@ public class SalaryIncomePredictor {
             }
         }
 
-        while (deductionsPercent == null) {
+        while (!increaseOrDecrease && deductionsPercent == null) {
             System.out.println("The deduction(%):");
             String _deductionsPercent = sc.next();
             if (validatePercent(_deductionsPercent)) {
@@ -54,7 +64,7 @@ public class SalaryIncomePredictor {
             }
         }
 
-        while (deductionsFrequency == null) {
+        while (!increaseOrDecrease && deductionsFrequency == null) {
             System.out.println("The frequency of deductions(times a year):");
             String _deductionsFrequency = sc.next();
             if (validateFrequency(_deductionsFrequency)) {
@@ -70,57 +80,91 @@ public class SalaryIncomePredictor {
                 predictionYears = Integer.valueOf(_predictionYears);
             }
         }
-        printReport(startingSalary, incrementPercent, incrementFrequency, deductionsPercent, deductionsFrequency, predictionYears);
+        printReport(startingSalary, incrementPercent, incrementFrequency, deductionsPercent, deductionsFrequency, predictionYears,increaseOrDecrease);
     }
 
-    private static void printReport(BigDecimal startingSalary, BigDecimal incrementPercent, Integer incrementFrequency, BigDecimal deductionsPercent, Integer deductionsFrequency, Integer predictionYears) {
-        printIncrementReport(startingSalary, incrementPercent, incrementFrequency, deductionsPercent, deductionsFrequency, predictionYears);
-        printDeductionReport(startingSalary, incrementPercent, incrementFrequency, deductionsPercent, deductionsFrequency, predictionYears);
-        printPrediction(startingSalary, incrementPercent, incrementFrequency, deductionsPercent, deductionsFrequency, predictionYears);
+    private static boolean validateIncreaseOrDecrease(String increaseOrDecrease) {
+        if(!"1".equals(increaseOrDecrease) && !"2".equals(increaseOrDecrease)){
+            System.out.println("Choose (1)increase or (2)decrease.");
+            return false;
+        }
+        return true;
     }
 
-    private static void printPrediction(BigDecimal startingSalary, BigDecimal incrementPercent, Integer incrementFrequency, BigDecimal deductionsPercent, Integer deductionsFrequency, Integer predictionYears) {
+    private static void printReport(BigDecimal startingSalary, BigDecimal incrementPercent, Integer incrementFrequency, BigDecimal deductionsPercent, Integer deductionsFrequency, Integer predictionYears,Boolean increaseOrDecrease) {
+        printIncrementReport(startingSalary, incrementPercent, incrementFrequency, deductionsPercent, deductionsFrequency, predictionYears,increaseOrDecrease);
+        printDeductionReport(startingSalary, incrementPercent, incrementFrequency, deductionsPercent, deductionsFrequency, predictionYears,increaseOrDecrease);
+        printPrediction(startingSalary, incrementPercent, incrementFrequency, deductionsPercent, deductionsFrequency, predictionYears,increaseOrDecrease);
+    }
+
+    private static void printPrediction(BigDecimal startingSalary, BigDecimal incrementPercent, Integer incrementFrequency, BigDecimal deductionsPercent, Integer deductionsFrequency, Integer predictionYears,Boolean increaseOrDecrease) {
         System.out.println("c.Prediction");
         System.out.println("Year|Starting Salary|Increment Amount|Deduction Amount|Salary Growth");
         for (int i = 1; i <= predictionYears; i++) {
             BigDecimal startingSalaryPrint = startingSalary;
-            startingSalary = SalaryUtils.increment(startingSalary, incrementPercent, incrementFrequency);
-            BigDecimal temp1 = startingSalary;
+            if(increaseOrDecrease){
+                startingSalary = SalaryUtils.increment(startingSalary, incrementPercent, incrementFrequency);
+            }else{
+                startingSalary = SalaryUtils.deduction(startingSalary, deductionsPercent, deductionsFrequency);
+            }
             Double incrementAmount = BigDecimalUtils.subtract(startingSalary.doubleValue(), startingSalaryPrint.doubleValue());
-            startingSalary = SalaryUtils.deduction(startingSalary, deductionsPercent, deductionsFrequency);
-            Double deductionAmount = BigDecimalUtils.subtract(startingSalary.doubleValue(), temp1.doubleValue());
+            Double deductionAmount = BigDecimalUtils.subtract(startingSalary.doubleValue(), startingSalaryPrint.doubleValue());
             Double salaryGrowth = BigDecimalUtils.subtract(startingSalary.doubleValue(), startingSalaryPrint.doubleValue());
-            System.out.println(i + "|" + BigDecimalUtils.moneyFormat(startingSalaryPrint.doubleValue()) + "|" + BigDecimalUtils.moneyFormat(incrementAmount) + "|" + BigDecimalUtils.moneyFormat(deductionAmount) + "|" + BigDecimalUtils.moneyFormat(salaryGrowth));
+            if(increaseOrDecrease){
+                System.out.println(i + "|" + BigDecimalUtils.moneyFormat(startingSalaryPrint.doubleValue()) + "|" + BigDecimalUtils.moneyFormat(incrementAmount) + "|/|" + BigDecimalUtils.moneyFormat(salaryGrowth));
+            }else{
+                System.out.println(i + "|" + BigDecimalUtils.moneyFormat(startingSalaryPrint.doubleValue()) + "|/|" + BigDecimalUtils.moneyFormat(deductionAmount) + "|" + BigDecimalUtils.moneyFormat(salaryGrowth));
+            }
         }
     }
 
-    private static void printDeductionReport(BigDecimal startingSalary, BigDecimal incrementPercent, Integer incrementFrequency, BigDecimal deductionsPercent, Integer deductionsFrequency, Integer predictionYears) {
+    private static void printDeductionReport(BigDecimal startingSalary, BigDecimal incrementPercent, Integer incrementFrequency, BigDecimal deductionsPercent, Integer deductionsFrequency, Integer predictionYears,Boolean increaseOrDecrease) {
         System.out.println("b.Deduction Report");
+        if(increaseOrDecrease){
+            System.out.println("-none-");
+            return;
+        }
         System.out.println("Year|Starting Salary|Number of deductions|Deduction%|Deduction Amount");
         for (int i = 1; i <= predictionYears; i++) {
             BigDecimal startingSalaryPrint = startingSalary;
-            startingSalary = SalaryUtils.increment(startingSalary, incrementPercent, incrementFrequency);
-            BigDecimal temp1 = startingSalary;
+            if(increaseOrDecrease){
+                startingSalary = SalaryUtils.increment(startingSalary, incrementPercent, incrementFrequency);
+            }else{
+                startingSalary = SalaryUtils.deduction(startingSalary, deductionsPercent, deductionsFrequency);
+            }
             Double incrementAmount = BigDecimalUtils.subtract(startingSalary.doubleValue(), startingSalaryPrint.doubleValue());
-            startingSalary = SalaryUtils.deduction(startingSalary, deductionsPercent, deductionsFrequency);
-            Double deductionAmount = BigDecimalUtils.subtract(startingSalary.doubleValue(), temp1.doubleValue());
+            Double deductionAmount = BigDecimalUtils.subtract(startingSalary.doubleValue(), startingSalaryPrint.doubleValue());
             Double salaryGrowth = BigDecimalUtils.subtract(startingSalary.doubleValue(), startingSalaryPrint.doubleValue());
-            System.out.println(i + "|" + BigDecimalUtils.moneyFormat(startingSalaryPrint.doubleValue()) + "|" + deductionsFrequency + "|" + deductionsPercent + "%|" + BigDecimalUtils.moneyFormat(deductionAmount));
+            if(increaseOrDecrease){
+                System.out.println(i + "|" + BigDecimalUtils.moneyFormat(startingSalaryPrint.doubleValue()) + "|" + incrementFrequency + "|" + incrementPercent + "%|" + BigDecimalUtils.moneyFormat(incrementAmount));
+            }else{
+                System.out.println(i + "|" + BigDecimalUtils.moneyFormat(startingSalaryPrint.doubleValue()) + "|" + deductionsFrequency + "|" + deductionsPercent + "%|" + BigDecimalUtils.moneyFormat(deductionAmount));
+            }
         }
     }
 
-    private static void printIncrementReport(BigDecimal startingSalary, BigDecimal incrementPercent, Integer incrementFrequency, BigDecimal deductionsPercent, Integer deductionsFrequency, Integer predictionYears) {
+    private static void printIncrementReport(BigDecimal startingSalary, BigDecimal incrementPercent, Integer incrementFrequency, BigDecimal deductionsPercent, Integer deductionsFrequency, Integer predictionYears,Boolean increaseOrDecrease) {
         System.out.println("a.Increment Report");
+        if(!increaseOrDecrease){
+            System.out.println("-none-");
+            return;
+        }
         System.out.println("Year|Starting Salary|Number of Increments|Increment%|Increment Amount");
         for (int i = 1; i <= predictionYears; i++) {
             BigDecimal startingSalaryPrint = startingSalary;
-            startingSalary = SalaryUtils.increment(startingSalary, incrementPercent, incrementFrequency);
-            BigDecimal temp1 = startingSalary;
+            if(increaseOrDecrease){
+                startingSalary = SalaryUtils.increment(startingSalary, incrementPercent, incrementFrequency);
+            }else{
+                startingSalary = SalaryUtils.deduction(startingSalary, deductionsPercent, deductionsFrequency);
+            }
             Double incrementAmount = BigDecimalUtils.subtract(startingSalary.doubleValue(), startingSalaryPrint.doubleValue());
-            startingSalary = SalaryUtils.deduction(startingSalary, deductionsPercent, deductionsFrequency);
-            Double deductionAmount = BigDecimalUtils.subtract(startingSalary.doubleValue(), temp1.doubleValue());
+            Double deductionAmount = BigDecimalUtils.subtract(startingSalary.doubleValue(), startingSalaryPrint.doubleValue());
             Double salaryGrowth = BigDecimalUtils.subtract(startingSalary.doubleValue(), startingSalaryPrint.doubleValue());
-            System.out.println(i + "|" + BigDecimalUtils.moneyFormat(startingSalaryPrint.doubleValue()) + "|" + incrementFrequency + "|" + incrementPercent + "%|" + BigDecimalUtils.moneyFormat(incrementAmount));
+            if(increaseOrDecrease){
+                System.out.println(i + "|" + BigDecimalUtils.moneyFormat(startingSalaryPrint.doubleValue()) + "|" + incrementFrequency + "|" + incrementPercent + "%|" + BigDecimalUtils.moneyFormat(incrementAmount));
+            }else{
+                System.out.println(i + "|" + BigDecimalUtils.moneyFormat(startingSalaryPrint.doubleValue()) + "|" + deductionsFrequency + "|" + deductionsPercent + "%|" + BigDecimalUtils.moneyFormat(deductionAmount));
+            }
         }
     }
 
