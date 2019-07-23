@@ -136,9 +136,9 @@ public class SalaryIncomePredictor {
             Double deductionAmount = BigDecimalUtils.subtract(startingSalary.doubleValue(), startingSalaryPrint.doubleValue());
             Double salaryGrowth = BigDecimalUtils.subtract(startingSalary.doubleValue(), startingSalaryPrint.doubleValue());
             if(increaseOrDecrease){
-                System.out.println(i + "|" + BigDecimalUtils.moneyFormat(startingSalaryPrint.doubleValue()) + "|" + incrementFrequency + "|" + incrementPercent + "%|" + BigDecimalUtils.moneyFormat(incrementAmount));
+                System.out.println(i + "|" + BigDecimalUtils.moneyFormat(startingSalaryPrint.doubleValue()) + "|" + BigDecimalUtils.moneyFormat(incrementAmount) + "|" + SalaryUtils.totalPercent(startingSalaryPrint,startingSalary) + "%|" + BigDecimalUtils.moneyFormat(incrementAmount));
             }else{
-                System.out.println(i + "|" + BigDecimalUtils.moneyFormat(startingSalaryPrint.doubleValue()) + "|" + deductionsFrequency + "|" + deductionsPercent + "%|" + BigDecimalUtils.moneyFormat(deductionAmount));
+                System.out.println(i + "|" + BigDecimalUtils.moneyFormat(startingSalaryPrint.doubleValue()) + "|" + BigDecimalUtils.moneyFormat(-deductionAmount) + "|" + SalaryUtils.totalPercent(startingSalaryPrint,startingSalary) + "%|" + BigDecimalUtils.moneyFormat(deductionAmount));
             }
         }
     }
@@ -161,9 +161,9 @@ public class SalaryIncomePredictor {
             Double deductionAmount = BigDecimalUtils.subtract(startingSalary.doubleValue(), startingSalaryPrint.doubleValue());
             Double salaryGrowth = BigDecimalUtils.subtract(startingSalary.doubleValue(), startingSalaryPrint.doubleValue());
             if(increaseOrDecrease){
-                System.out.println(i + "|" + BigDecimalUtils.moneyFormat(startingSalaryPrint.doubleValue()) + "|" + incrementFrequency + "|" + incrementPercent + "%|" + BigDecimalUtils.moneyFormat(incrementAmount));
+                System.out.println(i + "|" + BigDecimalUtils.moneyFormat(startingSalaryPrint.doubleValue()) + "|" + BigDecimalUtils.moneyFormat(incrementAmount) + "|" + SalaryUtils.totalPercent(startingSalaryPrint,startingSalary) + "%|" + BigDecimalUtils.moneyFormat(incrementAmount));
             }else{
-                System.out.println(i + "|" + BigDecimalUtils.moneyFormat(startingSalaryPrint.doubleValue()) + "|" + deductionsFrequency + "|" + deductionsPercent + "%|" + BigDecimalUtils.moneyFormat(deductionAmount));
+                System.out.println(i + "|" + BigDecimalUtils.moneyFormat(startingSalaryPrint.doubleValue()) + "|" + BigDecimalUtils.moneyFormat(-deductionAmount) + "|" + SalaryUtils.totalPercent(startingSalaryPrint,startingSalary) + "%|" + BigDecimalUtils.moneyFormat(deductionAmount));
             }
         }
     }

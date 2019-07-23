@@ -18,4 +18,8 @@ public class SalaryUtils {
         }
         return BigDecimal.valueOf(_salary);
     }
+
+    public static BigDecimal totalPercent(BigDecimal salary, BigDecimal finalSalary) {
+        return BigDecimal.valueOf(BigDecimalUtils.multiply(BigDecimalUtils.divide(BigDecimalUtils.subtract(finalSalary.doubleValue(),salary.doubleValue()),salary.doubleValue()),100));
+    }
 }
